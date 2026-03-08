@@ -236,7 +236,7 @@ Pais: ${datos.pais}
 Objetivo: ${datos.objetivo}
 `
 
-let respuesta = await fetch("/api/chat", {
+let respuesta = await fetch("/api/chat"), {
   method: "POST",
   headers: {
     "Content-Type": "application/json"
@@ -317,6 +317,7 @@ window.print()
 
 </body>
 </html>
+
 
 
 
