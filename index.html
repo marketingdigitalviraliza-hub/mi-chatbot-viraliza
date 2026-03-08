@@ -205,7 +205,7 @@ bot("Hola 👋 Soy el ChatBot de Viraliza")
 bot("Te ayudaré a crear tu estrategia de Meta Ads")
 bot("Para empezar, ¿Cuál es tu nombre o el de tu empresa?") // Primera pregunta cambiada
 
-async function enviar() {
+async function enviar() { // <--- ASEGÚRATE DE QUE TENGA 'async'
     let input = document.getElementById("inputUsuario");
     let texto = input.value.trim();
 
@@ -217,12 +217,12 @@ async function enviar() {
     // 2. Limpiamos el input de inmediato
     input.value = "";
 
-    // PASO 0: Capturar Nombre
+    // PASO 0: Capturar Nombre del Cliente
     if (paso === 0) {
         datos.nombreCliente = texto;
         bot(`Mucho gusto, ${texto}. Ahora dime: ¿Cuál es tu nicho de negocio?`);
         paso++;
-        return; // El return evita que pase al siguiente IF en la misma ejecución
+        return;
     }
 
     // PASO 1: Capturar Nicho
@@ -275,12 +275,6 @@ async function enviar() {
             Presupuesto: ${datos.presupuesto}
             Pais: ${datos.pais}
             Objetivo: ${datos.objetivo}
-
-            Debes generar:
-            - Estructura de campañas detallada
-            - Segmentación de público
-            - Tipos de anuncios recomendados
-            - Distribución de presupuesto sugerida
         `;
 
         try {
@@ -298,7 +292,6 @@ async function enviar() {
         }
     }
 }
-
 if(paso===4){
 
 datos.objetivo = texto
@@ -422,6 +415,7 @@ function guardarCliente(){
 
 </body>
 </html>
+
 
 
 
