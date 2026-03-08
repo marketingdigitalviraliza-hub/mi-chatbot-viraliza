@@ -1,0 +1,14 @@
+{
+  "name": "chatbot-viraliza",
+  "version": "1.0.0",
+  "description": "Chatbot de Viraliza",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "openai": "^4.0.0"
+  }
+}
