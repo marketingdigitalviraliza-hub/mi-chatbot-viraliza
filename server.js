@@ -18,7 +18,7 @@ app.post("/chat", async (req,res)=>{
 const mensaje = req.body.message
 
 const respuesta = await openai.responses.create({
-model:"gpt-5",
+model:"gpt-4.1-mini",
 input:`
 Eres un Media Buyer experto en Meta Ads y marketing digital.
 
@@ -62,4 +62,5 @@ app.listen(3000,()=>{
 console.log("Servidor funcionando")
 
 })
+
 
