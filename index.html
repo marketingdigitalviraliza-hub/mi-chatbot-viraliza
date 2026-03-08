@@ -153,11 +153,12 @@ background:#1d4ed8;
 let paso = 0
 
 let datos = {
-nicho:"",
-tipo:"",
-presupuesto:"",
-pais:"",
-objetivo:""
+nombreCliente: "", // Nueva variable
+nicho: "",
+tipo: "",
+presupuesto: "",
+pais: "",
+objetivo: ""
 }
 
 // Función modificada para procesar Markdown
@@ -199,15 +200,25 @@ enviar()
 }
 }
 
+// Cambia las preguntas iniciales al final del script:
 bot("Hola 👋 Soy el ChatBot de Viraliza")
 bot("Te ayudaré a crear tu estrategia de Meta Ads")
-bot("Primero dime: ¿Cuál es tu nicho de negocio?")
+bot("Para empezar, ¿Cuál es tu nombre o el de tu empresa?") // Primera pregunta cambiada
 
 async function enviar(){
+    let input = document.getElementById("inputUsuario")
+    let texto = input.value
+    if(texto==="") return
+    user(texto)
 
-let input = document.getElementById("inputUsuario")
-let texto = input.value
-
+    if(paso===0){
+        datos.nombreCliente = texto // Guardamos el nombre
+        bot(`Mucho gusto, ${texto}. Ahora dime: ¿Cuál es tu nicho de negocio?`)
+        paso++
+        input.value=""
+        return
+    }
+    // ... el resto de tus validaciones (paso 1, 2, 3...) siguen igual
 if(texto==="") return
 
 user(texto)
@@ -343,24 +354,20 @@ bot(data.reply)
 function descargarPDF() {
     const chat = document.getElementById("chat");
     
-    // 1. Creamos un título que solo se verá en el PDF
-    const tituloPDF = document.createElement("h2");
-    tituloPDF.innerText = "Estrategia de Meta Ads - Viraliza Marketing";
+    const tituloPDF = document.createElement("div");
     tituloPDF.style.textAlign = "center";
-    tituloPDF.style.color = "#2563eb";
     tituloPDF.style.marginBottom = "30px";
-    tituloPDF.className = "solo-impresion"; // Para identificarlo
+    // Usamos el nombre guardado para el título
+    tituloPDF.innerHTML = `
+        <h1 style="color: #2563eb; margin-bottom: 5px;">Viraliza Marketing</h1>
+        <h2 style="color: #333;">Estrategia de Meta Ads para: ${datos.nombreCliente}</h2>
+        <hr style="border: 1px solid #eee; margin: 20px 0;">
+    `;
 
-    // 2. Lo ponemos al inicio del contenido
     chat.prepend(tituloPDF);
-
-    // 3. Ejecutamos la impresión (el navegador aplicará los estilos @media print)
     window.print();
-
-    // 4. Lo quitamos después de imprimir para que el chat siga normal
     chat.removeChild(tituloPDF);
 }
-
 function guardarCliente(){
     let clientes = JSON.parse(localStorage.getItem("clientes") || "[]")
     clientes.push(datos)
@@ -371,6 +378,7 @@ function guardarCliente(){
 
 </body>
 </html>
+
 
 
 
