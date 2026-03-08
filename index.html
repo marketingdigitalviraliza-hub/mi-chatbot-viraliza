@@ -7,137 +7,91 @@
 <style>
 
 body{
-font-family: Arial;
-background:#0d0d0d;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
 margin:0;
+font-family:Arial;
+background:#0f0f0f;
 color:white;
-}
-
-#app{
-width:450px;
-background:#161616;
-border-radius:12px;
-box-shadow:0 0 20px rgba(0,0,0,0.6);
 display:flex;
 flex-direction:column;
-overflow:hidden;
+height:100vh;
 }
 
 #header{
-background:#111;
 padding:15px;
-text-align:center;
+background:#111;
 border-bottom:1px solid #333;
-}
-
-#header h2{
-margin:0;
-color:#00ffae;
+text-align:center;
 }
 
 #chat{
-height:350px;
+flex:1;
 overflow-y:auto;
-padding:15px;
-background:#121212;
+padding:20px;
+display:flex;
+flex-direction:column;
+gap:10px;
 }
 
 .bot{
 background:#1e1e1e;
-padding:10px;
-border-radius:8px;
-margin-bottom:10px;
-color:#00ffae;
+padding:12px;
+border-radius:10px;
+max-width:70%;
 }
 
 .user{
-background:#004d40;
-padding:10px;
-border-radius:8px;
-margin-bottom:10px;
-text-align:right;
+background:#2563eb;
+padding:12px;
+border-radius:10px;
+max-width:70%;
+align-self:flex-end;
 }
 
 #inputArea{
 display:flex;
+padding:10px;
+background:#111;
 border-top:1px solid #333;
 }
 
 #inputUsuario{
 flex:1;
-padding:12px;
-background:#1a1a1a;
+padding:10px;
+background:#1e1e1e;
 border:none;
 color:white;
+border-radius:6px;
 }
 
 button{
-background:#00c37a;
+margin-left:10px;
+padding:10px 16px;
+background:#2563eb;
 border:none;
-padding:12px;
-cursor:pointer;
 color:white;
+border-radius:6px;
+cursor:pointer;
 }
 
 button:hover{
-background:#00a766;
-}
-
-#tools{
-display:flex;
-gap:5px;
-padding:10px;
-background:#111;
-}
-
-.toolbtn{
-flex:1;
-background:#222;
-border:none;
-color:white;
-padding:8px;
-cursor:pointer;
-}
-
-.toolbtn:hover{
-background:#333;
+background:#1d4ed8;
 }
 
 </style>
-
 </head>
 
 <body>
 
-<div id="app">
-
 <div id="header">
-
-<img src="logo.png" style="width:120px;margin-bottom:8px;">
-
 <h2>El ChatBot de Viraliza</h2>
-
 </div>
+
 <div id="chat"></div>
 
-<div id="tools">
-<button class="toolbtn" onclick="generarCopies()">Copies Ads</button>
-<button class="toolbtn" onclick="generarCreativos()">Creativos</button>
-<button class="toolbtn" onclick="window.print()">PDF</button>
-</div>
-
 <div id="inputArea">
-<input id="inputUsuario" placeholder="Escribe aquí">
+<input id="inputUsuario" placeholder="Escribe tu respuesta...">
 <button onclick="enviar()">Enviar</button>
 </div>
-
-</div>
-
-<script>
 
 <script>
 
@@ -154,14 +108,17 @@ objetivo:""
 function bot(texto){
 let chat = document.getElementById("chat")
 chat.innerHTML += "<div class='bot'>"+texto+"</div>"
+chat.scrollTop = chat.scrollHeight
 }
 
 function user(texto){
 let chat = document.getElementById("chat")
 chat.innerHTML += "<div class='user'>"+texto+"</div>"
+chat.scrollTop = chat.scrollHeight
 }
 
 bot("Hola 👋 Soy el ChatBot de Viraliza")
+bot("Te ayudaré a crear tu estrategia de Meta Ads.")
 bot("Primero dime: ¿Cuál es tu nicho de negocio?")
 
 async function enviar(){
@@ -233,8 +190,7 @@ input.value=""
 
 </script>
 
-</script>
-
 </body>
-
 </html>
+</html>
+
