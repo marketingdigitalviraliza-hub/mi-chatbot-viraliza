@@ -127,7 +127,7 @@ background:#1d4ed8;
 
 <div id="header">
 <img src="/logo.png" id="logo">
-<h2>ChatBot Estratégico - Zetup Academy</h2>
+<h2>ChatBot Estratégico - Viraliza Academy</h2>
 </div>
 
 <div id="chat"></div>
@@ -154,7 +154,7 @@ let datos = {
     presupuesto: "",
     pais: "",
     objetivo: "",
-    estrategiaCompleta: "" // Guardamos la respuesta de la IA aquí
+    estrategiaCompleta: ""
 }
 
 function bot(texto){
@@ -184,7 +184,7 @@ function enterEnviar(e){
     if(e.key==="Enter") enviar();
 }
 
-bot("¡Hola! 👋 Bienvenido a la herramienta estratégica de **Zetup Academy**.")
+bot("¡Hola! 👋 Bienvenido a la herramienta estratégica de **Viraliza Academy**.")
 bot("Te ayudaré a diseñar la estrategia que usarás en el curso.")
 bot("Primero, ¿cuál es tu nombre?")
 
@@ -244,7 +244,7 @@ async function enviar() {
         
         let burbujaCarga = bot(""); 
 
-        let prompt = `Actúa como un Senior Media Buyer de Viraliza. Genera una estrategia de Meta Ads para ${datos.nombreCliente}. Nicho: ${datos.nicho}, Presupuesto: ${datos.presupuesto}, Objetivo: ${datos.objetivo}. Estructura la respuesta con Títulos claros (Campaña, Segmentación, Creativos) y usa listas.`;
+        let prompt = `Actúa como un Senior Media Buyer de Viraliza Academy. Genera una estrategia de Meta Ads detallada para ${datos.nombreCliente}. Nicho: ${datos.nicho}, Presupuesto: ${datos.presupuesto}, Objetivo: ${datos.objetivo}. Estructura la respuesta con Títulos claros (Campaña, Segmentación, Creativos) y usa listas.`;
 
         try {
             let respuesta = await fetch("/api/chat", {
@@ -254,7 +254,7 @@ async function enviar() {
             });
             let data = await respuesta.json();
             
-            datos.estrategiaCompleta = data.reply; // Guardamos para el envío
+            datos.estrategiaCompleta = data.reply;
             burbujaCarga.innerHTML = marked.parse(data.reply);
             guardarCliente();
             
@@ -271,13 +271,12 @@ function enviarWhatsAppAlUsuario() {
         return;
     }
 
-    // Limpiamos un poco el texto para que no sea excesivo en WA
     let resumenWA = datos.estrategiaCompleta
-        .replace(/[#*]/g, '') // Quitamos caracteres de Markdown
-        .substring(0, 1500); // Limitamos longitud para evitar errores de URL
+        .replace(/[#*]/g, '')
+        .substring(0, 1500);
 
     let mensajeWA = `¡Hola ${datos.nombreCliente}! 👋\n\n` +
-                    `Aquí tienes tu estrategia de *Zetup Academy*:\n\n` +
+                    `Aquí tienes tu estrategia de *Viraliza Academy*:\n\n` +
                     `${resumenWA}...\n\n` +
                     `🚀 *¡A darle con toda a esas campañas!*`;
     
@@ -314,7 +313,7 @@ function descargarPDF() {
     const tituloPDF = document.createElement("div");
     tituloPDF.style.textAlign = "center";
     tituloPDF.style.marginBottom = "30px";
-    tituloPDF.innerHTML = `<h1 style="color: #2563eb;">Zetup Academy x Viraliza</h1><h2>Estrategia para: ${datos.nombreCliente}</h2><hr>`;
+    tituloPDF.innerHTML = `<h1 style="color: #2563eb;">Viraliza Academy</h1><h2>Estrategia para: ${datos.nombreCliente}</h2><hr>`;
     chat.prepend(tituloPDF);
     window.print();
     chat.removeChild(tituloPDF);
@@ -328,10 +327,6 @@ function guardarCliente(){
 </script>
 </body>
 </html>
-
-
-
-
 
 
 
