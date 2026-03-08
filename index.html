@@ -44,7 +44,19 @@ max-width:85%;
 line-height: 1.5;
 }
 
-/* Estilos para el contenido que genera la IA */
+/* Animación de carga */
+.typing {
+    font-weight: bold;
+    animation: blink 1s infinite;
+    font-size: 20px;
+}
+@keyframes blink {
+    0% { opacity: 0.2; }
+    50% { opacity: 1; }
+    100% { opacity: 0.2; }
+}
+
+/* Estilos Markdown IA */
 .bot h1, .bot h2, .bot h3 { margin: 15px 0 8px 0; color: #2563eb; }
 .bot p { margin-bottom: 10px; }
 .bot ul, .bot ol { padding-left: 25px; margin-bottom: 10px; }
@@ -65,6 +77,7 @@ border-top:1px solid #333;
 display:flex;
 gap:10px;
 flex-wrap:wrap;
+justify-content: center;
 }
 
 #inputArea{
@@ -90,36 +103,21 @@ border:none;
 color:white;
 border-radius:6px;
 cursor:pointer;
+font-weight: bold;
 }
 
 button:hover{
 background:#1d4ed8;
 }
 
+.btn-wa { background: #25d366 !important; }
+.btn-wa:hover { background: #128c7e !important; }
+
 @media print {
-    #header, #tools, #inputArea, .user {
-        display: none !important;
-    }
-
-    body, #chat {
-        background: white !important;
-        color: black !important;
-        height: auto !important;
-        overflow: visible !important;
-    }
-
-    .bot {
-        background: white !important;
-        color: black !important;
-        border: 1px solid #eee;
-        max-width: 100% !important;
-        box-shadow: none !important;
-        page-break-inside: avoid;
-    }
-
-    .bot h1, .bot h2, .bot h3 {
-        color: #2563eb !important;
-    }
+    #header, #tools, #inputArea, .user { display: none !important; }
+    body, #chat { background: white !important; color: black !important; height: auto !important; overflow: visible !important; }
+    .bot { background: white !important; color: black !important; border: 1px solid #eee; max-width: 100% !important; box-shadow: none !important; }
+    .bot h1, .bot h2, .bot h3 { color: #2563eb !important; }
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -137,7 +135,8 @@ background:#1d4ed8;
 <div id="tools">
 <button onclick="generarCopies()">Generar copies</button>
 <button onclick="generarCreativos()">Ideas de creativos</button>
-<button onclick="descargarPDF()">Descargar estrategia PDF</button>
+<button onclick="descargarPDF()">Descargar PDF</button>
+<button onclick="enviarWhatsAppAlUsuario()" class="btn-wa">Recibir en mi WhatsApp</button>
 </div>
 
 <div id="inputArea">
@@ -149,6 +148,7 @@ background:#1d4ed8;
 let paso = 0
 let datos = {
     nombreCliente: "",
+    telefono: "", // Nuevo dato
     nicho: "",
     tipo: "",
     presupuesto: "",
@@ -160,14 +160,14 @@ function bot(texto){
     let chat = document.getElementById("chat")
     let div = document.createElement("div")
     div.className = "bot"
-    div.innerText = "Escribiendo..."
+    if(!texto){
+        div.innerHTML = '<span class="typing">...</span>';
+    } else {
+        div.innerHTML = marked.parse(texto);
+    }
     chat.appendChild(div)
     chat.scrollTop = chat.scrollHeight
-
-    setTimeout(()=>{
-        div.innerHTML = marked.parse(texto);
-        chat.scrollTop = chat.scrollHeight
-    },600)
+    return div;
 }
 
 function user(texto){
@@ -180,19 +180,16 @@ function user(texto){
 }
 
 function enterEnviar(e){
-    if(e.key==="Enter"){
-        enviar()
-    }
+    if(e.key==="Enter") enviar();
 }
 
 bot("Hola 👋 Soy el ChatBot de Viraliza")
 bot("Te ayudaré a crear tu estrategia de Meta Ads")
-bot("Para empezar, ¿Cuál es tu nombre o el de tu empresa?")
+bot("Para empezar, ¿Cuál es tu nombre?")
 
 async function enviar() {
     let input = document.getElementById("inputUsuario");
     let texto = input.value.trim();
-
     if (texto === "") return;
 
     user(texto);
@@ -200,60 +197,53 @@ async function enviar() {
 
     if (paso === 0) {
         datos.nombreCliente = texto;
-        bot(`Mucho gusto, ${texto}. Ahora dime: ¿Cuál es tu nicho de negocio?`);
+        bot(`Mucho gusto, ${texto}. ¿A qué número de WhatsApp quieres recibir tu estrategia? (Escríbelo con código de país, ej: 57300...)`);
         paso++;
         return;
     }
 
     if (paso === 1) {
+        datos.telefono = texto.replace(/\D/g,''); // Limpia el número (solo deja dígitos)
+        bot("¡Perfecto! Ahora dime: ¿Cuál es tu nicho de negocio?");
+        paso++;
+        return;
+    }
+
+    if (paso === 2) {
         datos.nicho = texto;
         bot("¿Qué tipo de negocio tienes? (ecommerce, servicio, local)");
         paso++;
         return;
     }
 
-    if (paso === 2) {
+    if (paso === 3) {
         datos.tipo = texto;
         bot("¿Cuál es tu presupuesto mensual para anuncios?");
         paso++;
         return;
     }
 
-    if (paso === 3) {
+    if (paso === 4) {
         datos.presupuesto = texto;
         bot("¿En qué país vendes?");
         paso++;
         return;
     }
 
-    if (paso === 4) {
+    if (paso === 5) {
         datos.pais = texto;
         bot("¿Cuál es tu objetivo? (ventas, leads, mensajes)");
         paso++;
         return;
     }
 
-    if (paso === 5) {
+    if (paso === 6) {
         datos.objetivo = texto;
-        bot("Analizando nicho y creando tu estrategia personalizada...");
+        bot("¡Entendido! Estoy procesando toda tu información...");
+        
+        let burbujaCarga = bot(""); 
 
-        let prompt = `
-            Eres experto en Meta Ads para la agencia Viraliza. 
-            Analiza este negocio y genera una estrategia completa y profesional para el cliente: ${datos.nombreCliente}.
-            Usa títulos (###), negritas (**) y listas.
-
-            Nicho: ${datos.nicho}
-            Tipo: ${datos.tipo}
-            Presupuesto: ${datos.presupuesto}
-            Pais: ${datos.pais}
-            Objetivo: ${datos.objetivo}
-
-            Debes generar:
-            - Estructura de campañas detallada
-            - Segmentación de público
-            - Tipos de anuncios recomendados
-            - Distribución de presupuesto sugerida
-        `;
+        let prompt = `Eres experto en Meta Ads para la agencia Viraliza. Genera una estrategia completa para ${datos.nombreCliente}. Nicho: ${datos.nicho}, Presupuesto: ${datos.presupuesto}, Objetivo: ${datos.objetivo}. Usa títulos y listas.`;
 
         try {
             let respuesta = await fetch("/api/chat", {
@@ -261,38 +251,56 @@ async function enviar() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ message: prompt })
             });
-
             let data = await respuesta.json();
-            bot(data.reply);
+            
+            burbujaCarga.innerHTML = marked.parse(data.reply);
             guardarCliente();
         } catch (error) {
-            bot("Lo siento, hubo un error al conectar con la IA. Intenta de nuevo.");
+            burbujaCarga.innerText = "Error de conexión. Intenta de nuevo.";
         }
     }
 }
 
+function enviarWhatsAppAlUsuario() {
+    if(!datos.telefono) {
+        bot("Aún no tengo tu número. Por favor, completa los pasos primero.");
+        return;
+    }
+
+    let mensajeWA = `¡Hola *${datos.nombreCliente}*! 👋\n\n` +
+                    `Aquí tienes el resumen de tu estrategia con *Viraliza Marketing Digital*:\n\n` +
+                    `📌 *Nicho:* ${datos.nicho}\n` +
+                    `💰 *Presupuesto:* ${datos.presupuesto}\n` +
+                    `🎯 *Objetivo:* ${datos.objetivo}\n\n` +
+                    `Para ver la estrategia completa y ejecutarla con éxito, puedes contactarnos respondiendo a este mensaje.`;
+    
+    let url = `https://api.whatsapp.com/send?phone=${datos.telefono}&text=${encodeURIComponent(mensajeWA)}`;
+    window.open(url, '_blank');
+}
+
+// ... (Funciones generarCopies, generarCreativos y descargarPDF se mantienen igual)
 async function generarCopies(){
-    bot("Generando copies publicitarios...")
-    let prompt = `Genera 3 copies persuasivos AIDA para: ${datos.nicho} en ${datos.pais}.`
+    let burbuja = bot("");
+    let prompt = `Genera 3 copies persuasivos AIDA para: ${datos.nicho}.`;
     let r = await fetch("/api/chat",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({message:prompt})
-    })
-    let data = await r.json()
-    bot(data.reply)
+    });
+    let data = await r.json();
+    burbuja.innerHTML = marked.parse(data.reply);
 }
 
 async function generarCreativos(){
-    bot("Generando ideas de creativos...")
-    let prompt = `Genera 5 ideas de creativos para: ${datos.nicho}.`
+    let burbuja = bot("");
+    let prompt = `Genera 5 ideas de creativos para: ${datos.nicho}.`;
     let r = await fetch("/api/chat",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({message:prompt})
-    })
-    let data = await r.json()
-    bot(data.reply)
+    });
+    let data = await r.json();
+    burbuja.innerHTML = marked.parse(data.reply);
 }
 
 function descargarPDF() {
@@ -300,11 +308,7 @@ function descargarPDF() {
     const tituloPDF = document.createElement("div");
     tituloPDF.style.textAlign = "center";
     tituloPDF.style.marginBottom = "30px";
-    tituloPDF.innerHTML = `
-        <h1 style="color: #2563eb; margin-bottom: 5px;">Viraliza Marketing</h1>
-        <h2 style="color: #333;">Estrategia de Meta Ads para: ${datos.nombreCliente}</h2>
-        <hr style="border: 1px solid #eee; margin: 20px 0;">
-    `;
+    tituloPDF.innerHTML = `<h1 style="color: #2563eb;">Viraliza Marketing</h1><h2>Estrategia para: ${datos.nombreCliente}</h2><hr>`;
     chat.prepend(tituloPDF);
     window.print();
     chat.removeChild(tituloPDF);
@@ -312,13 +316,12 @@ function descargarPDF() {
 
 function guardarCliente(){
     let clientes = JSON.parse(localStorage.getItem("clientes") || "[]")
-    clientes.push(datos)
-    localStorage.setItem("clientes", JSON.stringify(clientes))
+    clientes.push(datos);
+    localStorage.setItem("clientes", JSON.stringify(clientes));
 }
 </script>
 </body>
 </html>
-
 
 
 
