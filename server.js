@@ -7,6 +7,8 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
+app.use(express.static(__dirname))
+
 const openai = new OpenAI({
   apiKey: "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"
 })
@@ -43,4 +45,5 @@ reply: respuesta.output_text
 
 app.listen(3000,()=>{
 console.log("Servidor funcionando")
+
 })
