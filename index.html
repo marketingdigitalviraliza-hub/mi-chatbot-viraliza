@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>El ChatBot de Viraliza</title>
+<title>El ChatBot de Viraliza - Zetup Academy</title>
 
 <style>
 body{
@@ -127,7 +127,7 @@ background:#1d4ed8;
 
 <div id="header">
 <img src="/logo.png" id="logo">
-<h2>El ChatBot de Viraliza</h2>
+<h2>ChatBot Estratégico - Zetup Academy</h2>
 </div>
 
 <div id="chat"></div>
@@ -136,7 +136,7 @@ background:#1d4ed8;
 <button onclick="generarCopies()">Generar copies</button>
 <button onclick="generarCreativos()">Ideas de creativos</button>
 <button onclick="descargarPDF()">Descargar PDF</button>
-<button onclick="enviarWhatsAppAlUsuario()" class="btn-wa">Recibir en mi WhatsApp</button>
+<button onclick="enviarWhatsAppAlUsuario()" class="btn-wa">Enviar Estrategia a mi WhatsApp</button>
 </div>
 
 <div id="inputArea">
@@ -148,12 +148,13 @@ background:#1d4ed8;
 let paso = 0
 let datos = {
     nombreCliente: "",
-    telefono: "", // Nuevo dato
+    telefono: "",
     nicho: "",
     tipo: "",
     presupuesto: "",
     pais: "",
-    objetivo: ""
+    objetivo: "",
+    estrategiaCompleta: "" // Guardamos la respuesta de la IA aquí
 }
 
 function bot(texto){
@@ -183,9 +184,9 @@ function enterEnviar(e){
     if(e.key==="Enter") enviar();
 }
 
-bot("Hola 👋 Soy el ChatBot de Viraliza")
-bot("Te ayudaré a crear tu estrategia de Meta Ads")
-bot("Para empezar, ¿Cuál es tu nombre?")
+bot("¡Hola! 👋 Bienvenido a la herramienta estratégica de **Zetup Academy**.")
+bot("Te ayudaré a diseñar la estrategia que usarás en el curso.")
+bot("Primero, ¿cuál es tu nombre?")
 
 async function enviar() {
     let input = document.getElementById("inputUsuario");
@@ -197,53 +198,53 @@ async function enviar() {
 
     if (paso === 0) {
         datos.nombreCliente = texto;
-        bot(`Mucho gusto, ${texto}. ¿A qué número de WhatsApp quieres recibir tu estrategia? (Escríbelo con código de país, ej: 57300...)`);
+        bot(`Genial ${texto}. ¿A qué WhatsApp quieres que te enviemos el resumen final? (Código de país + número)`);
         paso++;
         return;
     }
 
     if (paso === 1) {
-        datos.telefono = texto.replace(/\D/g,''); // Limpia el número (solo deja dígitos)
-        bot("¡Perfecto! Ahora dime: ¿Cuál es tu nicho de negocio?");
+        datos.telefono = texto.replace(/\D/g,'');
+        bot("¿Cuál es el nicho o producto que vamos a escalar?");
         paso++;
         return;
     }
 
     if (paso === 2) {
         datos.nicho = texto;
-        bot("¿Qué tipo de negocio tienes? (ecommerce, servicio, local)");
+        bot("¿Qué tipo de negocio es? (ecommerce, servicio, local)");
         paso++;
         return;
     }
 
     if (paso === 3) {
         datos.tipo = texto;
-        bot("¿Cuál es tu presupuesto mensual para anuncios?");
+        bot("¿Presupuesto mensual estimado para pauta?");
         paso++;
         return;
     }
 
     if (paso === 4) {
         datos.presupuesto = texto;
-        bot("¿En qué país vendes?");
+        bot("¿País o ciudad objetivo?");
         paso++;
         return;
     }
 
     if (paso === 5) {
         datos.pais = texto;
-        bot("¿Cuál es tu objetivo? (ventas, leads, mensajes)");
+        bot("¿Cuál es el objetivo principal? (Ventas, Leads, Mensajes)");
         paso++;
         return;
     }
 
     if (paso === 6) {
         datos.objetivo = texto;
-        bot("¡Entendido! Estoy procesando toda tu información...");
+        bot("¡Entendido! Estamos procesando tu estrategia de nivel experto...");
         
         let burbujaCarga = bot(""); 
 
-        let prompt = `Eres experto en Meta Ads para la agencia Viraliza. Genera una estrategia completa para ${datos.nombreCliente}. Nicho: ${datos.nicho}, Presupuesto: ${datos.presupuesto}, Objetivo: ${datos.objetivo}. Usa títulos y listas.`;
+        let prompt = `Actúa como un Senior Media Buyer de Viraliza. Genera una estrategia de Meta Ads para ${datos.nombreCliente}. Nicho: ${datos.nicho}, Presupuesto: ${datos.presupuesto}, Objetivo: ${datos.objetivo}. Estructura la respuesta con Títulos claros (Campaña, Segmentación, Creativos) y usa listas.`;
 
         try {
             let respuesta = await fetch("/api/chat", {
@@ -253,8 +254,11 @@ async function enviar() {
             });
             let data = await respuesta.json();
             
+            datos.estrategiaCompleta = data.reply; // Guardamos para el envío
             burbujaCarga.innerHTML = marked.parse(data.reply);
             guardarCliente();
+            
+            bot("¡Listo! Ya puedes descargar tu PDF o recibir el resumen en tu WhatsApp con los botones de abajo. 👇");
         } catch (error) {
             burbujaCarga.innerText = "Error de conexión. Intenta de nuevo.";
         }
@@ -262,23 +266,25 @@ async function enviar() {
 }
 
 function enviarWhatsAppAlUsuario() {
-    if(!datos.telefono) {
-        bot("Aún no tengo tu número. Por favor, completa los pasos primero.");
+    if(!datos.telefono || !datos.estrategiaCompleta) {
+        alert("Primero completa la estrategia para poder enviarla.");
         return;
     }
 
-    let mensajeWA = `¡Hola *${datos.nombreCliente}*! 👋\n\n` +
-                    `Aquí tienes el resumen de tu estrategia con *Viraliza Marketing Digital*:\n\n` +
-                    `📌 *Nicho:* ${datos.nicho}\n` +
-                    `💰 *Presupuesto:* ${datos.presupuesto}\n` +
-                    `🎯 *Objetivo:* ${datos.objetivo}\n\n` +
-                    `Para ver la estrategia completa y ejecutarla con éxito, puedes contactarnos respondiendo a este mensaje.`;
+    // Limpiamos un poco el texto para que no sea excesivo en WA
+    let resumenWA = datos.estrategiaCompleta
+        .replace(/[#*]/g, '') // Quitamos caracteres de Markdown
+        .substring(0, 1500); // Limitamos longitud para evitar errores de URL
+
+    let mensajeWA = `¡Hola ${datos.nombreCliente}! 👋\n\n` +
+                    `Aquí tienes tu estrategia de *Zetup Academy*:\n\n` +
+                    `${resumenWA}...\n\n` +
+                    `🚀 *¡A darle con toda a esas campañas!*`;
     
     let url = `https://api.whatsapp.com/send?phone=${datos.telefono}&text=${encodeURIComponent(mensajeWA)}`;
     window.open(url, '_blank');
 }
 
-// ... (Funciones generarCopies, generarCreativos y descargarPDF se mantienen igual)
 async function generarCopies(){
     let burbuja = bot("");
     let prompt = `Genera 3 copies persuasivos AIDA para: ${datos.nicho}.`;
@@ -308,7 +314,7 @@ function descargarPDF() {
     const tituloPDF = document.createElement("div");
     tituloPDF.style.textAlign = "center";
     tituloPDF.style.marginBottom = "30px";
-    tituloPDF.innerHTML = `<h1 style="color: #2563eb;">Viraliza Marketing</h1><h2>Estrategia para: ${datos.nombreCliente}</h2><hr>`;
+    tituloPDF.innerHTML = `<h1 style="color: #2563eb;">Zetup Academy x Viraliza</h1><h2>Estrategia para: ${datos.nombreCliente}</h2><hr>`;
     chat.prepend(tituloPDF);
     window.print();
     chat.removeChild(tituloPDF);
@@ -322,7 +328,6 @@ function guardarCliente(){
 </script>
 </body>
 </html>
-
 
 
 
