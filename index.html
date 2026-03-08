@@ -25,7 +25,7 @@ text-align:center;
 
 #logo{
 width:120px;
-margin-bottom:8px;
+margin-bottom:5px;
 }
 
 #chat{
@@ -91,13 +91,12 @@ background:#1d4ed8;
 }
 
 </style>
-
 </head>
 
 <body>
 
-<div style="text-align:center">
-<img src="/logo.png">
+<div id="header">
+<img src="/logo.png" id="logo">
 <h2>El ChatBot de Viraliza</h2>
 </div>
 
@@ -130,29 +129,34 @@ function bot(texto){
 
 let chat = document.getElementById("chat")
 
-let typing = document.createElement("div")
-typing.className = "bot"
-typing.innerText = "Escribiendo..."
+let div = document.createElement("div")
+div.className = "bot"
+div.innerText = "Escribiendo..."
 
-chat.appendChild(typing)
+chat.appendChild(div)
 chat.scrollTop = chat.scrollHeight
 
 setTimeout(()=>{
-typing.innerText = texto
-},800)
+div.innerText = texto
+},600)
 
 }
 
 function user(texto){
 
 let chat = document.getElementById("chat")
-chat.innerHTML += `<div class="user">${texto}</div>`
+
+let div = document.createElement("div")
+div.className="user"
+div.innerText=texto
+
+chat.appendChild(div)
 chat.scrollTop = chat.scrollHeight
 
 }
 
-function enterEnviar(event){
-if(event.key === "Enter"){
+function enterEnviar(e){
+if(e.key==="Enter"){
 enviar()
 }
 }
@@ -163,27 +167,10 @@ bot("Primero dime: ¿Cuál es tu nicho de negocio?")
 
 async function enviar(){
 
-  let texto = input.value
+let input = document.getElementById("inputUsuario")
+let texto = input.value
 
-  if(texto === "") return
-
-  user(texto)
-
-  let respuesta = await fetch("/api/chat",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json"
-    },
-    body: JSON.stringify({ message: texto })
-  })
-
-  let data = await respuesta.json()
-
-  bot(data.reply)
-
-  input.value=""
-
-}
+if(texto==="") return
 
 user(texto)
 
@@ -191,50 +178,60 @@ if(paso===0){
 datos.nicho = texto
 bot("¿Qué tipo de negocio tienes? (ecommerce, servicio, local)")
 paso++
+input.value=""
+return
 }
 
-else if(paso===1){
+if(paso===1){
 datos.tipo = texto
 bot("¿Cuál es tu presupuesto mensual para anuncios?")
 paso++
+input.value=""
+return
 }
 
-else if(paso===2){
+if(paso===2){
 datos.presupuesto = texto
 bot("¿En qué país vendes?")
 paso++
+input.value=""
+return
 }
 
-else if(paso===3){
+if(paso===3){
 datos.pais = texto
 bot("¿Cuál es tu objetivo? (ventas, leads, mensajes)")
 paso++
+input.value=""
+return
 }
 
-else if(paso===4){
+if(paso===4){
 
 datos.objetivo = texto
 
 bot("Analizando nicho...")
+setTimeout(()=>bot("Analizando competencia..."),1000)
+setTimeout(()=>bot("Creando estructura de campañas..."),2000)
+setTimeout(()=>bot("Generando estrategia..."),3000)
 
-setTimeout(()=>{
-bot("Analizando competencia...")
-},1000)
+let prompt = `
+Eres experto en Meta Ads.
 
-setTimeout(()=>{
-bot("Creando estructura de campañas...")
-},2000)
+Analiza este negocio y genera estrategia completa:
 
-setTimeout(()=>{
-bot("Generando estrategia...")
-},3000)
-
-let mensaje = `
 Nicho: ${datos.nicho}
 Tipo: ${datos.tipo}
 Presupuesto: ${datos.presupuesto}
 Pais: ${datos.pais}
 Objetivo: ${datos.objetivo}
+
+Debes generar:
+
+- estructura de campañas
+- segmentación
+- tipos de anuncios
+- distribución de presupuesto
 `
 
 let respuesta = await fetch("/api/chat",{
@@ -242,15 +239,18 @@ method:"POST",
 headers:{
 "Content-Type":"application/json"
 },
-body: JSON.stringify({ message: texto })
+body:JSON.stringify({message:prompt})
 })
 
 let data = await respuesta.json()
 
 bot(data.reply)
-}
+
+guardarCliente()
 
 input.value=""
+
+}
 
 }
 
@@ -266,17 +266,13 @@ Tipo: ${datos.tipo}
 Pais: ${datos.pais}
 `
 
-let respuesta = await fetch("/api/chat",{
+let r = await fetch("/api/chat",{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body: JSON.stringify({
-message:prompt
-})
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({message:prompt})
 })
 
-let data = await respuesta.json()
+let data = await r.json()
 
 bot(data.reply)
 
@@ -293,24 +289,32 @@ Nicho: ${datos.nicho}
 Tipo: ${datos.tipo}
 `
 
-let respuesta = await fetch("/chat",{
+let r = await fetch("/api/chat",{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body: JSON.stringify({
-message:prompt
-})
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({message:prompt})
 })
 
-let data = await respuesta.json()
+let data = await r.json()
 
 bot(data.reply)
 
 }
 
 function descargarPDF(){
+
 window.print()
+
+}
+
+function guardarCliente(){
+
+let clientes = JSON.parse(localStorage.getItem("clientes") || "[]")
+
+clientes.push(datos)
+
+localStorage.setItem("clientes", JSON.stringify(clientes))
+
 }
 
 </script>
