@@ -236,18 +236,17 @@ Pais: ${datos.pais}
 Objetivo: ${datos.objetivo}
 `
 
-let respuesta = await fetch("/api/chat"), {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({ message })
+let respuesta = await fetch("/api/chat",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body: JSON.stringify({ message: texto })
 })
 
 let data = await respuesta.json()
 
 bot(data.reply)
-
 }
 
 input.value=""
@@ -317,6 +316,7 @@ window.print()
 
 </body>
 </html>
+
 
 
 
