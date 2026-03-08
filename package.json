@@ -1,0 +1,11 @@
+{
+  "name": "chatbot-viraliza",
+  "version": "1.0.0",
+  "description": "Bot generador de estrategias para la agencia",
+  "scripts": {
+    "start": "node api/chat.js"
+  },
+  "dependencies": {
+    "openai": "^4.28.0"
+  }
+}
