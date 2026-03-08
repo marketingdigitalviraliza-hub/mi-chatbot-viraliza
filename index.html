@@ -96,7 +96,34 @@ cursor:pointer;
 button:hover{
 background:#1d4ed8;
 }
+@media print {
+    /* Escondemos lo que no debe ir en el PDF */
+    #header, #tools, #inputArea, .user {
+        display: none !important;
+    }
 
+    /* Ajustamos el chat para que use toda la hoja */
+    body, #chat {
+        background: white !important;
+        color: black !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    .bot {
+        background: white !important;
+        color: black !important;
+        border: 1px solid #eee;
+        max-width: 100% !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+    }
+
+    /* Títulos en negro para que se lean bien en papel */
+    .bot h1, .bot h2, .bot h3 {
+        color: #2563eb !important;
+    }
+}
 </style>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
@@ -313,8 +340,25 @@ bot(data.reply)
 
 }
 
-function descargarPDF(){
-    window.print()
+function descargarPDF() {
+    const chat = document.getElementById("chat");
+    
+    // 1. Creamos un título que solo se verá en el PDF
+    const tituloPDF = document.createElement("h2");
+    tituloPDF.innerText = "Estrategia de Meta Ads - Viraliza Marketing";
+    tituloPDF.style.textAlign = "center";
+    tituloPDF.style.color = "#2563eb";
+    tituloPDF.style.marginBottom = "30px";
+    tituloPDF.className = "solo-impresion"; // Para identificarlo
+
+    // 2. Lo ponemos al inicio del contenido
+    chat.prepend(tituloPDF);
+
+    // 3. Ejecutamos la impresión (el navegador aplicará los estilos @media print)
+    window.print();
+
+    // 4. Lo quitamos después de imprimir para que el chat siga normal
+    chat.removeChild(tituloPDF);
 }
 
 function guardarCliente(){
@@ -327,6 +371,7 @@ function guardarCliente(){
 
 </body>
 </html>
+
 
 
 
