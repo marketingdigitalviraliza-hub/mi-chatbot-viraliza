@@ -205,54 +205,98 @@ bot("Hola 👋 Soy el ChatBot de Viraliza")
 bot("Te ayudaré a crear tu estrategia de Meta Ads")
 bot("Para empezar, ¿Cuál es tu nombre o el de tu empresa?") // Primera pregunta cambiada
 
-async function enviar(){
-    let input = document.getElementById("inputUsuario")
-    let texto = input.value
-    if(texto==="") return
-    user(texto)
+async function enviar() {
+    let input = document.getElementById("inputUsuario");
+    let texto = input.value.trim();
 
-    if(paso===0){
-        datos.nombreCliente = texto // Guardamos el nombre
-        bot(`Mucho gusto, ${texto}. Ahora dime: ¿Cuál es tu nicho de negocio?`)
-        paso++
-        input.value=""
-        return
+    if (texto === "") return;
+
+    // 1. Pintamos el mensaje del usuario UNA SOLA VEZ
+    user(texto);
+    
+    // 2. Limpiamos el input de inmediato
+    input.value = "";
+
+    // PASO 0: Capturar Nombre
+    if (paso === 0) {
+        datos.nombreCliente = texto;
+        bot(`Mucho gusto, ${texto}. Ahora dime: ¿Cuál es tu nicho de negocio?`);
+        paso++;
+        return; // El return evita que pase al siguiente IF en la misma ejecución
     }
-    // ... el resto de tus validaciones (paso 1, 2, 3...) siguen igual
-if(texto==="") return
 
-user(texto)
+    // PASO 1: Capturar Nicho
+    if (paso === 1) {
+        datos.nicho = texto;
+        bot("¿Qué tipo de negocio tienes? (ecommerce, servicio, local)");
+        paso++;
+        return;
+    }
 
-if(paso===0){
-datos.nicho = texto
-bot("¿Qué tipo de negocio tienes? (ecommerce, servicio, local)")
-paso++
-input.value=""
-return
-}
+    // PASO 2: Capturar Tipo
+    if (paso === 2) {
+        datos.tipo = texto;
+        bot("¿Cuál es tu presupuesto mensual para anuncios?");
+        paso++;
+        return;
+    }
 
-if(paso===1){
-datos.tipo = texto
-bot("¿Cuál es tu presupuesto mensual para anuncios?")
-paso++
-input.value=""
-return
-}
+    // PASO 3: Capturar Presupuesto
+    if (paso === 3) {
+        datos.presupuesto = texto;
+        bot("¿En qué país vendes?");
+        paso++;
+        return;
+    }
 
-if(paso===2){
-datos.presupuesto = texto
-bot("¿En qué país vendes?")
-paso++
-input.value=""
-return
-}
+    // PASO 4: Capturar País
+    if (paso === 4) {
+        datos.pais = texto;
+        bot("¿Cuál es tu objetivo? (ventas, leads, mensajes)");
+        paso++;
+        return;
+    }
 
-if(paso===3){
-datos.pais = texto
-bot("¿Cuál es tu objetivo? (ventas, leads, mensajes)")
-paso++
-input.value=""
-return
+    // PASO 5: Capturar Objetivo y Generar Estrategia
+    if (paso === 5) {
+        datos.objetivo = texto;
+
+        bot("Analizando nicho...");
+        setTimeout(() => bot("Creando estructura de campañas profesional..."), 1500);
+        setTimeout(() => bot("Generando estrategia personalizada..."), 3000);
+
+        let prompt = `
+            Eres experto en Meta Ads para la agencia Viraliza. 
+            Analiza este negocio y genera una estrategia completa y profesional para el cliente: ${datos.nombreCliente}.
+            Usa títulos (###), negritas (**) y listas para que sea fácil de leer.
+
+            Nicho: ${datos.nicho}
+            Tipo: ${datos.tipo}
+            Presupuesto: ${datos.presupuesto}
+            Pais: ${datos.pais}
+            Objetivo: ${datos.objetivo}
+
+            Debes generar:
+            - Estructura de campañas detallada
+            - Segmentación de público
+            - Tipos de anuncios recomendados
+            - Distribución de presupuesto sugerida
+        `;
+
+        try {
+            let respuesta = await fetch("/api/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: prompt })
+            });
+
+            let data = await respuesta.json();
+            bot(data.reply);
+            guardarCliente();
+        } catch (error) {
+            bot("Lo siento, hubo un error al conectar con la IA. Intenta de nuevo.");
+        }
+    }
 }
 
 if(paso===4){
@@ -378,6 +422,7 @@ function guardarCliente(){
 
 </body>
 </html>
+
 
 
 
