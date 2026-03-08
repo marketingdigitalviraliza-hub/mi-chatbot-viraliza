@@ -139,6 +139,8 @@ background:#333;
 
 <script>
 
+<script>
+
 let paso = 0
 
 let datos = {
@@ -151,18 +153,15 @@ objetivo:""
 
 function bot(texto){
 let chat = document.getElementById("chat")
-chat.innerHTML += `<div class="bot">${texto}</div>`
-chat.scrollTop = chat.scrollHeight
+chat.innerHTML += "<div class='bot'>"+texto+"</div>"
 }
 
 function user(texto){
 let chat = document.getElementById("chat")
-chat.innerHTML += `<div class="user">${texto}</div>`
-chat.scrollTop = chat.scrollHeight
+chat.innerHTML += "<div class='user'>"+texto+"</div>"
 }
 
-bot("Hola 👋 Soy El ChatBot de Viraliza")
-bot("Te ayudaré a crear tu estrategia de Meta Ads")
+bot("Hola 👋 Soy el ChatBot de Viraliza")
 bot("Primero dime: ¿Cuál es tu nicho de negocio?")
 
 async function enviar(){
@@ -182,7 +181,7 @@ paso++
 
 else if(paso===1){
 datos.tipo = texto
-bot("¿Cuál es tu presupuesto mensual?")
+bot("¿Cuál es tu presupuesto mensual para anuncios?")
 paso++
 }
 
@@ -212,7 +211,7 @@ Pais: ${datos.pais}
 Objetivo: ${datos.objetivo}
 `
 
-let respuesta = await fetch("http://localhost:3000/chat",{
+let respuesta = await fetch("/chat",{
 method:"POST",
 headers:{
 "Content-Type":"application/json"
@@ -232,60 +231,10 @@ input.value=""
 
 }
 
-async function generarCopies(){
-
-bot("Generando copies de anuncios...")
-
-let prompt = `
-Genera 3 copies de anuncios para Meta Ads para:
-
-Nicho: ${datos.nicho}
-Tipo: ${datos.tipo}
-Pais: ${datos.pais}
-
-Hazlos cortos y persuasivos
-`
-
-let respuesta = await fetch("http://localhost:3000/chat",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body: JSON.stringify({message:prompt})
-})
-
-let data = await respuesta.json()
-
-bot(data.reply)
-
-}
-
-async function generarCreativos(){
-
-bot("Generando ideas de creativos...")
-
-let prompt = `
-Genera 5 ideas de creativos para anuncios de Meta Ads para:
-
-Nicho: ${datos.nicho}
-Tipo: ${datos.tipo}
-`
-
-let respuesta = await fetch("http://localhost:3000/chat",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body: JSON.stringify({message:prompt})
-})
-
-let data = await respuesta.json()
-
-bot(data.reply)
-
-}
+</script>
 
 </script>
 
 </body>
+
 </html>
