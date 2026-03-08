@@ -23,6 +23,11 @@ border-bottom:1px solid #333;
 text-align:center;
 }
 
+#logo{
+width:120px;
+margin-bottom:8px;
+}
+
 #chat{
 flex:1;
 overflow-y:auto;
@@ -53,6 +58,7 @@ background:#111;
 border-top:1px solid #333;
 display:flex;
 gap:10px;
+flex-wrap:wrap;
 }
 
 #inputArea{
@@ -91,6 +97,7 @@ background:#1d4ed8;
 <body>
 
 <div id="header">
+<img id="logo" src="logo.png">
 <h2>El ChatBot de Viraliza</h2>
 </div>
 
@@ -99,6 +106,7 @@ background:#1d4ed8;
 <div id="tools">
 <button onclick="generarCopies()">Generar copies</button>
 <button onclick="generarCreativos()">Ideas de creativos</button>
+<button onclick="descargarPDF()">Descargar estrategia PDF</button>
 </div>
 
 <div id="inputArea">
@@ -228,10 +236,8 @@ let prompt = `
 Genera 3 copies publicitarios para Meta Ads para:
 
 Nicho: ${datos.nicho}
-Tipo de negocio: ${datos.tipo}
+Tipo: ${datos.tipo}
 Pais: ${datos.pais}
-
-Los copies deben ser cortos y persuasivos.
 `
 
 let respuesta = await fetch("/chat",{
@@ -259,8 +265,6 @@ Genera 5 ideas de creativos para anuncios de Meta Ads para:
 
 Nicho: ${datos.nicho}
 Tipo: ${datos.tipo}
-
-Incluye ideas para video e imagen.
 `
 
 let respuesta = await fetch("/chat",{
@@ -277,6 +281,10 @@ let data = await respuesta.json()
 
 bot(data.reply)
 
+}
+
+function descargarPDF(){
+window.print()
 }
 
 </script>
