@@ -86,7 +86,10 @@ background:#1d4ed8;
 <div id="header">
 <h2>El ChatBot de Viraliza</h2>
 </div>
-
+<div style="padding:10px;background:#111;border-top:1px solid #333;">
+<button onclick="generarCopies()">Generar copies de anuncios</button>
+<button onclick="generarCreativos()">Ideas de creativos</button>
+</div>
 <div id="chat"></div>
 
 <div id="inputArea">
@@ -107,9 +110,22 @@ objetivo:""
 }
 
 function bot(texto){
+
 let chat = document.getElementById("chat")
-chat.innerHTML += `<div class="bot">${texto}</div>`
+
+let typing = document.createElement("div")
+typing.className = "bot"
+typing.innerText = "Escribiendo..."
+
+chat.appendChild(typing)
 chat.scrollTop = chat.scrollHeight
+
+setTimeout(()=>{
+
+typing.innerText = texto
+
+},800)
+
 }
 
 function user(texto){
@@ -194,8 +210,66 @@ bot(data.reply)
 input.value=""
 
 }
+  async function generarCopies(){
+
+bot("Generando copies publicitarios...")
+
+let prompt = `
+Genera 3 copies publicitarios para Meta Ads para:
+
+Nicho: ${datos.nicho}
+Tipo de negocio: ${datos.tipo}
+Pais: ${datos.pais}
+
+Los copies deben ser cortos y persuasivos.
+`
+
+let respuesta = await fetch("/chat",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body: JSON.stringify({
+message:prompt
+})
+})
+
+let data = await respuesta.json()
+
+bot(data.reply)
+
+}
+  async function generarCreativos(){
+
+bot("Generando ideas de creativos...")
+
+let prompt = `
+Genera 5 ideas de creativos para anuncios de Meta Ads para:
+
+Nicho: ${datos.nicho}
+Tipo: ${datos.tipo}
+
+Incluye ideas para video e imagen.
+`
+
+let respuesta = await fetch("/chat",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body: JSON.stringify({
+message:prompt
+})
+})
+
+let data = await respuesta.json()
+
+bot(data.reply)
+
+}
 
 </script>
 
 </body>
 </html>
+
