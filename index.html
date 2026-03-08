@@ -165,6 +165,10 @@ async function enviar(){
 
 let texto = document.getElementById("input").value
 
+if(texto === "") return
+
+user(texto)
+
 let respuesta = await fetch("/api/chat",{
 method:"POST",
 headers:{
@@ -313,6 +317,7 @@ window.print()
 
 </body>
 </html>
+
 
 
 
