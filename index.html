@@ -97,7 +97,7 @@ background:#1d4ed8;
 <body>
 
 <div style="text-align:center">
-<img src="logo.png" style="width:120px;margin-bottom:10px;">
+<img src="/logo.png">
 <h2>El ChatBot de Viraliza</h2>
 </div>
 
@@ -163,8 +163,21 @@ bot("Primero dime: ¿Cuál es tu nicho de negocio?")
 
 async function enviar(){
 
-let input = document.getElementById("inputUsuario")
-let texto = input.value
+let message = document.getElementById("input").value
+
+let respuesta = await fetch("/api/chat",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body: JSON.stringify({ message: message })
+})
+
+let data = await respuesta.json()
+
+bot(data.reply)
+
+}
 
 if(texto==="") return
 
@@ -301,6 +314,7 @@ window.print()
 
 </body>
 </html>
+
 
 
 
