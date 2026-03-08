@@ -47,6 +47,14 @@ max-width:70%;
 align-self:flex-end;
 }
 
+#tools{
+padding:10px;
+background:#111;
+border-top:1px solid #333;
+display:flex;
+gap:10px;
+}
+
 #inputArea{
 display:flex;
 padding:10px;
@@ -64,7 +72,6 @@ border-radius:6px;
 }
 
 button{
-margin-left:10px;
 padding:10px 16px;
 background:#2563eb;
 border:none;
@@ -86,11 +93,13 @@ background:#1d4ed8;
 <div id="header">
 <h2>El ChatBot de Viraliza</h2>
 </div>
-<div style="padding:10px;background:#111;border-top:1px solid #333;">
-<button onclick="generarCopies()">Generar copies de anuncios</button>
+
+<div id="chat"></div>
+
+<div id="tools">
+<button onclick="generarCopies()">Generar copies</button>
 <button onclick="generarCreativos()">Ideas de creativos</button>
 </div>
-<div id="chat"></div>
 
 <div id="inputArea">
 <input id="inputUsuario" placeholder="Escribe aquí..." onkeypress="enterEnviar(event)">
@@ -121,17 +130,17 @@ chat.appendChild(typing)
 chat.scrollTop = chat.scrollHeight
 
 setTimeout(()=>{
-
 typing.innerText = texto
-
 },800)
 
 }
 
 function user(texto){
+
 let chat = document.getElementById("chat")
 chat.innerHTML += `<div class="user">${texto}</div>`
 chat.scrollTop = chat.scrollHeight
+
 }
 
 function enterEnviar(event){
@@ -210,7 +219,8 @@ bot(data.reply)
 input.value=""
 
 }
-  async function generarCopies(){
+
+async function generarCopies(){
 
 bot("Generando copies publicitarios...")
 
@@ -239,7 +249,8 @@ let data = await respuesta.json()
 bot(data.reply)
 
 }
-  async function generarCreativos(){
+
+async function generarCreativos(){
 
 bot("Generando ideas de creativos...")
 
@@ -272,4 +283,3 @@ bot(data.reply)
 
 </body>
 </html>
-
