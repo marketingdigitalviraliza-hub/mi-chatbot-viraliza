@@ -78,6 +78,7 @@ background:#1d4ed8;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -89,7 +90,7 @@ background:#1d4ed8;
 <div id="chat"></div>
 
 <div id="inputArea">
-<input id="inputUsuario" placeholder="Escribe tu respuesta...">
+<input id="inputUsuario" placeholder="Escribe aquí..." onkeypress="enterEnviar(event)">
 <button onclick="enviar()">Enviar</button>
 </div>
 
@@ -107,18 +108,24 @@ objetivo:""
 
 function bot(texto){
 let chat = document.getElementById("chat")
-chat.innerHTML += "<div class='bot'>"+texto+"</div>"
+chat.innerHTML += `<div class="bot">${texto}</div>`
 chat.scrollTop = chat.scrollHeight
 }
 
 function user(texto){
 let chat = document.getElementById("chat")
-chat.innerHTML += "<div class='user'>"+texto+"</div>"
+chat.innerHTML += `<div class="user">${texto}</div>`
 chat.scrollTop = chat.scrollHeight
 }
 
+function enterEnviar(event){
+if(event.key === "Enter"){
+enviar()
+}
+}
+
 bot("Hola 👋 Soy el ChatBot de Viraliza")
-bot("Te ayudaré a crear tu estrategia de Meta Ads.")
+bot("Te ayudaré a crear tu estrategia de Meta Ads")
 bot("Primero dime: ¿Cuál es tu nicho de negocio?")
 
 async function enviar(){
@@ -192,5 +199,3 @@ input.value=""
 
 </body>
 </html>
-
-
