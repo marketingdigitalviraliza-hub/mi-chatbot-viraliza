@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>El ChatBot de Viraliza</title>
+
+<style>
+
+body{
+font-family: Arial;
+background:#0d0d0d;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+color:white;
+}
+
+#app{
+width:450px;
+background:#161616;
+border-radius:12px;
+box-shadow:0 0 20px rgba(0,0,0,0.6);
+display:flex;
+flex-direction:column;
+overflow:hidden;
+}
+
+#header{
+background:#111;
+padding:15px;
+text-align:center;
+border-bottom:1px solid #333;
+}
+
+#header h2{
+margin:0;
+color:#00ffae;
+}
+
+#chat{
+height:350px;
+overflow-y:auto;
+padding:15px;
+background:#121212;
+}
+
+.bot{
+background:#1e1e1e;
+padding:10px;
+border-radius:8px;
+margin-bottom:10px;
+color:#00ffae;
+}
+
+.user{
+background:#004d40;
+padding:10px;
+border-radius:8px;
+margin-bottom:10px;
+text-align:right;
+}
+
+#inputArea{
+display:flex;
+border-top:1px solid #333;
+}
+
+#inputUsuario{
+flex:1;
+padding:12px;
+background:#1a1a1a;
+border:none;
+color:white;
+}
+
+button{
+background:#00c37a;
+border:none;
+padding:12px;
+cursor:pointer;
+color:white;
+}
+
+button:hover{
+background:#00a766;
+}
+
+#tools{
+display:flex;
+gap:5px;
+padding:10px;
+background:#111;
+}
+
+.toolbtn{
+flex:1;
+background:#222;
+border:none;
+color:white;
+padding:8px;
+cursor:pointer;
+}
+
+.toolbtn:hover{
+background:#333;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="app">
+
+<div id="header">
+
+<img src="logo.png" style="width:120px;margin-bottom:8px;">
+
+<h2>El ChatBot de Viraliza</h2>
+
+</div>
+<div id="chat"></div>
+
+<div id="tools">
+<button class="toolbtn" onclick="generarCopies()">Copies Ads</button>
+<button class="toolbtn" onclick="generarCreativos()">Creativos</button>
+<button class="toolbtn" onclick="window.print()">PDF</button>
+</div>
+
+<div id="inputArea">
+<input id="inputUsuario" placeholder="Escribe aquí">
+<button onclick="enviar()">Enviar</button>
+</div>
+
+</div>
+
+<script>
+
+let paso = 0
+
+let datos = {
+nicho:"",
+tipo:"",
+presupuesto:"",
+pais:"",
+objetivo:""
+}
+
+function bot(texto){
+let chat = document.getElementById("chat")
+chat.innerHTML += `<div class="bot">${texto}</div>`
+chat.scrollTop = chat.scrollHeight
+}
+
+function user(texto){
+let chat = document.getElementById("chat")
+chat.innerHTML += `<div class="user">${texto}</div>`
+chat.scrollTop = chat.scrollHeight
+}
+
+bot("Hola 👋 Soy El ChatBot de Viraliza")
+bot("Te ayudaré a crear tu estrategia de Meta Ads")
+bot("Primero dime: ¿Cuál es tu nicho de negocio?")
+
+async function enviar(){
+
+let input = document.getElementById("inputUsuario")
+let texto = input.value
+
+if(texto==="") return
+
+user(texto)
+
+if(paso===0){
+datos.nicho = texto
+bot("¿Qué tipo de negocio tienes? (ecommerce, servicio, local)")
+paso++
+}
+
+else if(paso===1){
+datos.tipo = texto
+bot("¿Cuál es tu presupuesto mensual?")
+paso++
+}
+
+else if(paso===2){
+datos.presupuesto = texto
+bot("¿En qué país vendes?")
+paso++
+}
+
+else if(paso===3){
+datos.pais = texto
+bot("¿Cuál es tu objetivo? (ventas, leads, mensajes)")
+paso++
+}
+
+else if(paso===4){
+
+datos.objetivo = texto
+
+bot("Analizando tu negocio...")
+
+let mensaje = `
+Nicho: ${datos.nicho}
+Tipo: ${datos.tipo}
+Presupuesto: ${datos.presupuesto}
+Pais: ${datos.pais}
+Objetivo: ${datos.objetivo}
+`
+
+let respuesta = await fetch("http://localhost:3000/chat",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body: JSON.stringify({
+message:mensaje
+})
+})
+
+let data = await respuesta.json()
+
+bot(data.reply)
+
+}
+
+input.value=""
+
+}
+
+async function generarCopies(){
+
+bot("Generando copies de anuncios...")
+
+let prompt = `
+Genera 3 copies de anuncios para Meta Ads para:
+
+Nicho: ${datos.nicho}
+Tipo: ${datos.tipo}
+Pais: ${datos.pais}
+
+Hazlos cortos y persuasivos
+`
+
+let respuesta = await fetch("http://localhost:3000/chat",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body: JSON.stringify({message:prompt})
+})
+
+let data = await respuesta.json()
+
+bot(data.reply)
+
+}
+
+async function generarCreativos(){
+
+bot("Generando ideas de creativos...")
+
+let prompt = `
+Genera 5 ideas de creativos para anuncios de Meta Ads para:
+
+Nicho: ${datos.nicho}
+Tipo: ${datos.tipo}
+`
+
+let respuesta = await fetch("http://localhost:3000/chat",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body: JSON.stringify({message:prompt})
+})
+
+let data = await respuesta.json()
+
+bot(data.reply)
+
+}
+
+</script>
+
+</body>
+</html>
