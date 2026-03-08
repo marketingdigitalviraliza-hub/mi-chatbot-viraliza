@@ -10,13 +10,17 @@ const openai = new OpenAI({
 apiKey: process.env.OPENAI_API_KEY
 })
 
-const { message } = req.body
+const { message } = req.body;
 
-try{
+  // 1. Ocultamos esta instrucción al final del mensaje del usuario
+  const instruccionesFormato = "\n\nIMPORTANTE: Responde de forma muy amigable, conversacional y fácil de leer. Usa párrafos cortos (máximo 3 líneas). Usa doble salto de línea entre ideas. NO uses formato Markdown (cero asteriscos y cero numerales).";
+  
+  const mensajeFinal = message + instruccionesFormato;
 
-const response = await openai.responses.create({
-model:"gpt-4o-mini",
-input:message
+  try {
+    const response = await openai.responses.create({
+      model: "gpt-4o-mini",
+      input: mensajeFinal
 })
 
 res.status(200).json({
