@@ -198,7 +198,19 @@ else if(paso===4){
 
 datos.objetivo = texto
 
-bot("Analizando tu negocio...")
+bot("Analizando nicho...")
+
+setTimeout(()=>{
+bot("Analizando competencia...")
+},1000)
+
+setTimeout(()=>{
+bot("Creando estructura de campañas...")
+},2000)
+
+setTimeout(()=>{
+bot("Generando estrategia...")
+},3000)
 
 let mensaje = `
 Nicho: ${datos.nicho}
@@ -291,3 +303,4 @@ window.print()
 
 </body>
 </html>
+
