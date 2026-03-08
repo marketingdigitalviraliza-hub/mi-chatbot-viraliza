@@ -163,26 +163,27 @@ bot("Primero dime: ¿Cuál es tu nicho de negocio?")
 
 async function enviar(){
 
-let texto = document.getElementById("input").value
+  let texto = input.value
 
-if(texto === "") return
+  if(texto === "") return
 
-user(texto)
+  user(texto)
 
-let respuesta = await fetch("/api/chat",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body: JSON.stringify({ message: texto })
-})
+  let respuesta = await fetch("/api/chat",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body: JSON.stringify({ message: texto })
+  })
 
-let data = await respuesta.json()
+  let data = await respuesta.json()
 
-bot(data.reply)
+  bot(data.reply)
+
+  input.value=""
 
 }
-
 
 user(texto)
 
@@ -316,6 +317,7 @@ window.print()
 
 </body>
 </html>
+
 
 
 
